@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="dashboard-container">
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <h2>Dashboard</h2>
+        <button onclick="showPanel('welcomePanel')">Home</button>
+        <button onclick="showPanel('profilePanel')">View Profile</button>
+        <button onclick="showPanel('depositPanel')">Deposit</button>
+        <button onclick="showPanel('withdrawPanel')">Withdraw</button>
+        <button onclick="showPanel('transferPanel')">Transfer Money</button>
+        <button onclick="showPanel('billPanel')">Bill Payment</button>
+        <button onclick="showPanel('editProfilePanel')">Edit Profile</button>
+        <button onclick="showPanel('historyPanel')">Transaction History</button>
+        <a href="/logout">Logout</a>
+      </div>
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <!-- Welcome Panel -->
+        <div id="welcomePanel" class="dashboard-panel" style="display: block">
+          <h1>Welcome, {{ user.name }}</h1>
+          <p>
+            <strong>Account No:</strong> {{ user.account_no }} |
+            <strong>Bank:</strong> {{ user.bank }}
+          </p>
+          <p>
+            <strong>Balance:</strong> ₹<span id="balance">{{ balance }}</span>
+          </p>
+          <p>Select an option from the sidebar.</p>
+        </div>
+
+        <!-- Deposit -->
+        <div id="depositPanel" class="dashboard-panel">
+          <h2>Deposit</h2>
+          <input type="number" id="deposit_amount" placeholder="Amount" />
+          <button onclick="bankAction('deposit')">Deposit</button>
+        </div>
+
+        <!-- Withdraw -->
+        <div id="withdrawPanel" class="dashboard-panel">
+          <h2>Withdraw</h2>
+          <input type="number" id="withdraw_amount" placeholder="Amount" />
+          <button onclick="bankAction('withdraw')">Withdraw</button>
+        </div>
+
+        <!-- Transfer -->
+        <div id="transferPanel" class="dashboard-panel">
+          <h2>Transfer Money</h2>
+          <input type="number" id="transfer_amount" placeholder="Amount" />
+          <input type="text" id="to_user" placeholder="Recipient Username" />
+          <button onclick="transfer()">Transfer</button>
+        </div>
+
+        <!-- Bill Payment -->
+        <div id="billPanel" class="dashboard-panel">
+          <h2>Bill Payment</h2>
+          <input type="number" id="bill_amount" placeholder="Amount" />
+          <input type="text" id="biller" placeholder="Biller Name or ID" />
+          <button onclick="payBill()">Pay</button>
+        </div>
+
+        <!-- View Profile -->
+        <div id="profilePanel" class="dashboard-panel">
+          <h2>My Profile</h2>
+          <p><strong>Email:</strong> {{ user.email }}</p>
+          <p><strong>Phone:</strong> {{ user.phone }}</p>
+          <p><strong>Address:</strong> {{ user.address }}</p>
+        </div>
+
+        <!-- Edit Profile -->
+        <div id="editProfilePanel" class="dashboard-panel">
+          <h2>Edit Profile</h2>
+          <form method="post" action="/update_profile">
+            <input
+              name="email"
+              type="email"
+              value="{{ user.email }}"
+              placeholder="Email"
+              required
+            /><br />
+            <input
+              name="phone"
+              value="{{ user.phone }}"
+              placeholder="Phone Number"
+              required
+            /><br />
+            <input
+              name="password"
+              type="password"
+              placeholder="New PIN"
+            /><br />
+            <button type="submit">Update Profile</button>
+          </form>
+        </div>
+
+        <!-- Transaction History -->
+        <div id="historyPanel" class="dashboard-panel">
+          <h2>Transaction History</h2>
+          <ul>
+            {% for txn in transactions %}
+            <li>
+              {{ txn.timestamp }} - {{ txn.type }} - ₹{{ txn.amount }} - {{
+              txn.details }}
+            </li>
+            {% else %}
+            <li>No transactions found.</li>
+            {% endfor %}
+          </ul>
+        </div>
+
+        <!-- Status Message -->
+        <p id="message"></p>
+      </div>
+    </div>
+
+    <!-- Panel JS -->
+    <script>
+      function showPanel(id) {
+        document
+          .querySelectorAll(".dashboard-panel")
+          .forEach((p) => (p.style.display = "none"));
+        document.getElementById(id).style.display = "block";
+
+        // ✅ Clear success/error message
+        const msg = document.getElementById("message");
+        if (msg) msg.textContent = "";
+      }
+    </script>
+    <script src="/static/script.js"></script>
+  </body>
+</html>
